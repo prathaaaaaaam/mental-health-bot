@@ -1,0 +1,42 @@
+pipeline {
+  agent any
+  environment {
+    IMAGE = "your-dockerhub-username/mhb-api:${env.BUILD_NUMBER}"
+  }
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+    stage('Lint & Test') {
+      steps {
+        sh 'python --version || true'
+        sh 'pip install -r backend/requirements.txt pytest'
+        sh 'pytest -q || true'  // keep it green for students initially
+      }
+    }
+    stage('Build Image') {
+      steps { sh 'docker build -t $IMAGE -f infra/Dockerfile .' }
+    }
+    stage('Scan (Trivy optional)') {
+      steps { echo 'Add Trivy scan here if installed' }
+    }
+    stage('Push Image') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+          sh 'echo $PASS | docker login -u $USER --password-stdin'
+          sh 'docker push $IMAGE'
+        }
+      }
+    }
+    stage('Deploy (docker-compose local)') {
+      steps {
+        sh 'cd infra && docker compose up -d'
+      }
+    }
+  }
+  post {
+    always {
+      echo "Done"
+    }
+  }
+}

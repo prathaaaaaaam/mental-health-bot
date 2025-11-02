@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mhb-api
+  namespace: mhb
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mhb-api
+  template:
+    metadata:
+      labels:
+        app: mhb-api
+    spec:
+      containers:
+        - name: api
+          image: <REPLACE_WITH_YOUR_IMAGE>
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
