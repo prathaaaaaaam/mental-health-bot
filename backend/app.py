@@ -5,7 +5,8 @@ from starlette.responses import Response
 from starlette.middleware.cors import CORSMiddleware
 import time
 
-from model import analyze_mood
+from backend.model import analyze_mood
+
 from safety import is_crisis
 from response_bank import empathetic_reply, crisis_reply
 
