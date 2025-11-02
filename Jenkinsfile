@@ -46,16 +46,19 @@ pipeline {
         }
 
         stage('Terraform Init & Apply') {
-            steps {
-                dir('terraform') {
-                    sh '''
-                    echo "⚙️ Running Terraform..."
-                    terraform init -input=false
-                    terraform apply -auto-approve
-                    '''
-                }
+    steps {
+        withAWS(credentials: "${AWS_CREDS}", region: "${AWS_DEFAULT_REGION}") {
+            dir('terraform') {
+                sh '''
+                echo "⚙️ Running Terraform..."
+                terraform init -input=false
+                terraform apply -auto-approve
+                '''
             }
         }
+    }
+}
+
 
         stage('Deploy to Kubernetes') {
             steps {
