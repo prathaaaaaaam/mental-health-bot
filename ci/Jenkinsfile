@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         AWS_DEFAULT_REGION = 'ap-south-1'
-        ECR_URL = '123456789012.dkr.ecr.ap-south-1.amazonaws.com'
+        ECR_URL = '745540665884.dkr.ecr.ap-south-1.amazonaws.com/mental-health-bot'
         IMAGE_REPO_NAME = 'mental-health-bot'
         AWS_CREDS = 'aws-creds'
     }
